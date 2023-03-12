@@ -113,7 +113,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "getTotal",
+		"name": "totalCampaign",
 		"outputs": [
 			{
 				"internalType": "uint256",

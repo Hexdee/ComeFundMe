@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity >=0.7.0 <0.9.0;
 
+/// @title A Come Fund Me decentralized campaign
+/// @author Your name goes here
 contract ComeFundMe {
+    /// @notice totalCampaign that holds the totalCampaign number of campaign created
+    uint256 public totalCampaign;
+
+    /// @notice Campaign struc to hold all the neccessary information needed for each campaign
     struct Campaign {
         uint id;
         address payable creator;
@@ -16,9 +21,24 @@ contract ComeFundMe {
         bool ended;
     }
 
-    uint private total;
+    /// @notice campaigns array that will holds all the campaigns created
     Campaign[] internal campaigns;
 
+    /// @notice isValidId a modifier that checks is an id is valid or not
+    /// @dev It checks if the id passed as an argument is less than the totalCampaign value
+    /// @param _id the id to be checked
+    modifier isValidId(uint256 _id) {
+        require(_id < totalCampaign, "Invalid ID");
+        _;
+    }
+
+
+    /// @notice createCampaign creates a campaign with data passed in by the user
+    /// @dev It creates a campaign and stores it in the campaigns array
+    /// @param _title the title of the campaign
+    /// @param _description the description of what the campaign is about
+    /// @param _image the image of the campaign
+    /// @param _amount the amount to needed by the campaign
     function createCampaign(
         string memory _title,
         string memory _description,
@@ -26,7 +46,7 @@ contract ComeFundMe {
         uint _amount
     ) public {
         Campaign memory newCampaign = Campaign(
-            total,
+            totalCampaign,
             payable(msg.sender),
             block.timestamp,
             _title,
@@ -38,34 +58,40 @@ contract ComeFundMe {
             false
         );
         campaigns.push(newCampaign);
-        total++;
+        totalCampaign++;
     }
 
-    function getCampaign(uint _id) public view returns (Campaign memory) {
-        require(_id < total, "Invalid id");
+    /// @notice getCampaign gets the data of a particular campaign stored in the campaign array
+    /// @dev It uses the campaign id passed as an argument to get a particular campaign from the campaign array
+    /// @param _id the id of a campaign
+    /// @return Campaign with all the data stored in it
+    function getCampaign(uint _id) public isValidId(_id) view returns (Campaign memory) {
         return campaigns[_id];
     }
 
-    function getTotal() public view returns (uint) {
-        return total;
-    }
-
-    function donate(uint _id) public payable {
-        require(_id < total, "Invalid id");
+    /// @notice doante allows any user to donate to a particular campaign
+    /// @dev It uses the campaign's id passed as an argument to get a particular campaign from the campaign array and the funds donated are added to that campaign
+    /// @param _id the id of a campaign
+    function donate(uint _id) public isValidId(_id) payable {
         require(msg.value > 0, "Amount must be greater than 0!");
         require(campaigns[_id].ended == false, "Campaign has ended");
         campaigns[_id].contributors++;
         campaigns[_id].raised += msg.value;
     }
 
-    function withdraw(uint _id) public {
-        require(_id < campaigns.length, "Invalid id");
+    /// @notice withdraw allows only the owner of a campaign to withdraw all the funds donated to that campaign
+    /// @dev It uses the campaign id passed as an argument to get a particular campaign from the campaign array and sends the funds donated to the campaign to the owner of the campaign
+    /// @param _id the id of a campaign
+    function withdraw(uint _id) public isValidId(_id) {
         require(
             campaigns[_id].creator == msg.sender,
             "Only creator can withdraw"
         );
         require(campaigns[_id].ended == false, "Funds has been withdrawn!");
-        campaigns[_id].creator.transfer(campaigns[_id].raised);
+        require(campaigns[_id].raised > 0, "No funds to withdraw");
+        uint256 amount = campaigns[_id].raised;
+        campaigns[_id].creator.transfer(amount);
+        campaigns[_id].raised -= amount;
         campaigns[_id].ended = true;
     }
 }

@@ -1,5 +1,4 @@
 # ComeFundMe
-<video src='./comefundme.mp4' width=500></video>
 
 ## Description
 This is a very simple crowdfunding dapp where users can:

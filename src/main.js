@@ -2,8 +2,7 @@ import Web3 from "web3"
 import { newKitFromWeb3 } from "@celo/contractkit"
 import comefundmeAbi from "../contract/comefundme.abi.json"
 
-const ContractAddress = "0xf7f423bE00cb0aa46baAb061c90271648A19c9c4"
-
+const ContractAddress = "0x2d692f8639D7f73Ae7FbF0d7f220c702Dd352890";
 let kit
 let contract
 let campaigns = []
@@ -37,7 +36,7 @@ const getBalance = async function () {
 }
 
 const getCampaigns = async function () {
-    const _total = await contract.methods.getTotal().call()
+    const _total = await contract.methods.totalCampaign().call()
     const _campaigns = []
     for (let i = 0; i < _total; i++) {
         let _campaign = new Promise(async (resolve, reject) => {
@@ -55,7 +54,7 @@ const getCampaigns = async function () {
                 ended: p[9],
             })
         })
-        _campaigns.unshift(_campaign)
+        _campaigns.push(_campaign)
     }
     campaigns = await Promise.all(_campaigns)
     renderCampaigns()
@@ -88,11 +87,11 @@ function campaignTemplate(_campaign) {
         </p>
         <p class="card-text mt-4">
           <i class="bi bi-geo-alt-fill"></i>
-          <span>Target: ${_campaign.amount}</span>
+          <span>Target: ${Intl.NumberFormat().format(_campaign.amount)}</span>
         </p>
         <p class="card-text mt-4">
           <i class="bi bi-geo-alt-fill"></i>
-          <span>Raised: ${_campaign.raised}</span>
+          <span>Raised: ${Intl.NumberFormat().format(_campaign.raised)}</span>
         </p>
         ${_campaign.ended ? "<p class='text-danger'>Campaign has ended</p>" : _campaign.creator == kit.defaultAccount ?
             `<div class="d-grid gap-2">
@@ -175,14 +174,14 @@ document
 
 document.querySelector("#comefundme").addEventListener("click", async (e) => {
     if (e.target.className.includes("donateBtn")) {
-        const index = e.target.id
+        const id = e.target.id
         const amount = document.getElementById("donationAmount").value
-        notification(`⌛ Donating to "${campaigns[index].title}"...`)
+        notification(`⌛ Donating to "${campaigns[id].title}"...`)
         try {
             const result = await contract.methods
-                .donate(index)
+                .donate(id)
                 .send({ from: kit.defaultAccount, value: kit.web3.utils.toWei(amount) });
-            notification(`🎉 You successfully donated ${amount} CELO to "${campaigns[index].title}".`)
+            notification(`🎉 You successfully donated ${amount} CELO to "${campaigns[id].title}".`)
             getCampaigns()
             getBalance()
         } catch (error) {
@@ -190,15 +189,15 @@ document.querySelector("#comefundme").addEventListener("click", async (e) => {
         }
     } else if (e.target.className.includes("withdrawBtn")) {
         const id = e.target.id.slice(9)
-        console.log({ id })
         notification(`⌛ Withdrawing from "${campaigns[id].title}"...`)
         try {
             const result = await contract.methods
                 .withdraw(id)
                 .send({ from: kit.defaultAccount });
-            notification(`🎉 You've successfully withdrawn ${campaigns[id].raise} CELO from "${campaigns[index].title}".`)
-            getCampaigns()
-            getBalance()
+            notification(`🎉 You've successfully withdrawn ${campaigns[id].raise} CELO from "${campaigns[id].title}".`)
+            await getCampaigns();
+            await getBalance();
+            notificationOff();
         } catch (error) {
             notification(`⚠️ ${error}.`)
         }

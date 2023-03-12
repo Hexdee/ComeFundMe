@@ -2,8 +2,8 @@ import Web3 from "web3"
 import { newKitFromWeb3 } from "@celo/contractkit"
 import comefundmeAbi from "../contract/comefundme.abi.json"
 
-const ContractAddress = "0xf7f423bE00cb0aa46baAb061c90271648A19c9c4"
-
+const ContractAddress = "0xef81Ee31c99003C119D00a3EDF7D9e9d105079f9";
+// "0xf7f423bE00cb0aa46baAb061c90271648A19c9c4";
 let kit
 let contract
 let campaigns = []
@@ -37,7 +37,7 @@ const getBalance = async function () {
 }
 
 const getCampaigns = async function () {
-    const _total = await contract.methods.getTotal().call()
+    const _total = await contract.methods.totalCampaign().call()
     const _campaigns = []
     for (let i = 0; i < _total; i++) {
         let _campaign = new Promise(async (resolve, reject) => {

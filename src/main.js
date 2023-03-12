@@ -2,7 +2,7 @@ import Web3 from "web3"
 import { newKitFromWeb3 } from "@celo/contractkit"
 import comefundmeAbi from "../contract/comefundme.abi.json"
 
-const ContractAddress = "0xef81Ee31c99003C119D00a3EDF7D9e9d105079f9";
+const ContractAddress = "0x706DfFe9902Dc179BA9D5C8336430F8886B126B8";
 // "0xf7f423bE00cb0aa46baAb061c90271648A19c9c4";
 let kit
 let contract

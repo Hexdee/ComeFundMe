@@ -196,7 +196,7 @@ document.querySelector("#comefundme").addEventListener("click", async (e) => {
             const result = await contract.methods
                 .withdraw(id)
                 .send({ from: kit.defaultAccount });
-            notification(`🎉 You've successfully withdrawn ${campigns[id].raise} CELO from "${campaigns[index].title}".`)
+            notification(`🎉 You've successfully withdrawn ${campaigns[id].raise} CELO from "${campaigns[index].title}".`)
             getCampaigns()
             getBalance()
         } catch (error) {

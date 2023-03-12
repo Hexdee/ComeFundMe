@@ -1,4 +1,4 @@
-# Celo Marketplace Dapp
+# ComeFundMe
 
 ## Description
 This is a very simple crowdfunding dapp where users can:
@@ -8,7 +8,7 @@ This is a very simple crowdfunding dapp where users can:
 * Withdraw funds raised from their campaign
 
 ## Live Demo
-[Marketplace Dapp](https://hexdee.github.io/ComeFundMe/)
+[ComeFundMe](https://hexdee.github.io/ComeFundMe/)
 
 ## Usage
 

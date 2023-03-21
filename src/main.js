@@ -2,7 +2,7 @@ import Web3 from "web3"
 import { newKitFromWeb3 } from "@celo/contractkit"
 import comefundmeAbi from "../contract/comefundme.abi.json"
 
-const ContractAddress = "0x2d692f8639D7f73Ae7FbF0d7f220c702Dd352890";
+const ContractAddress = "0xD89646E090F9f5a6936dC79C825d691Cc2ae9630";
 let kit
 let contract
 let campaigns = []
@@ -100,7 +100,7 @@ function campaignTemplate(_campaign) {
             Withdraw
             </a>
           </div>` :
-            `<input type="text" id="donationAmount" class="form-control mb-2"
+            `<input type="number" id="donationAmount" class="form-control mb-2"
                       placeholder="Enter amount to donate" />
             <div class="d-grid gap-2">
               <a class="btn btn-lg btn-outline-dark donateBtn fs-6 p-3" id=${_campaign.id
@@ -176,6 +176,7 @@ document.querySelector("#comefundme").addEventListener("click", async (e) => {
     if (e.target.className.includes("donateBtn")) {
         const id = e.target.id
         const amount = document.getElementById("donationAmount").value
+        console.log(typeof (amount));
         notification(`⌛ Donating to "${campaigns[id].title}"...`)
         try {
             const result = await contract.methods

@@ -32,7 +32,6 @@ contract ComeFundMe {
         _;
     }
 
-
     /// @notice createCampaign creates a campaign with data passed in by the user
     /// @dev It creates a campaign and stores it in the campaigns array
     /// @param _title the title of the campaign
@@ -65,16 +64,22 @@ contract ComeFundMe {
     /// @dev It uses the campaign id passed as an argument to get a particular campaign from the campaign array
     /// @param _id the id of a campaign
     /// @return Campaign with all the data stored in it
-    function getCampaign(uint _id) public isValidId(_id) view returns (Campaign memory) {
+    function getCampaign(
+        uint _id
+    ) public view isValidId(_id) returns (Campaign memory) {
         return campaigns[_id];
     }
 
     /// @notice doante allows any user to donate to a particular campaign
     /// @dev It uses the campaign's id passed as an argument to get a particular campaign from the campaign array and the funds donated are added to that campaign
     /// @param _id the id of a campaign
-    function donate(uint _id) public isValidId(_id) payable {
+    function donate(uint _id) public payable isValidId(_id) {
         require(msg.value > 0, "Amount must be greater than 0!");
         require(campaigns[_id].ended == false, "Campaign has ended");
+        require(
+            msg.sender != campaigns[_id].creator,
+            "You cannot donate to your own campaign"
+        );
         campaigns[_id].contributors++;
         campaigns[_id].raised += msg.value;
     }
@@ -91,7 +96,6 @@ contract ComeFundMe {
         require(campaigns[_id].raised > 0, "No funds to withdraw");
         uint256 amount = campaigns[_id].raised;
         campaigns[_id].creator.transfer(amount);
-        campaigns[_id].raised -= amount;
         campaigns[_id].ended = true;
     }
 }

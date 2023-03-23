@@ -95,7 +95,8 @@ contract ComeFundMe {
         require(campaigns[_id].ended == false, "Funds has been withdrawn!");
         require(campaigns[_id].raised > 0, "No funds to withdraw");
         uint256 amount = campaigns[_id].raised;
-        campaigns[_id].creator.transfer(amount);
         campaigns[_id].ended = true;
+
+        campaigns[_id].creator.transfer(amount);
     }
 }

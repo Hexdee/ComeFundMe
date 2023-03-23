@@ -100,7 +100,7 @@ function campaignTemplate(_campaign) {
             Withdraw
             </a>
           </div>` :
-            `<input type="number" id="donationAmount" class="form-control mb-2"
+            `<input type="number" id="donationAmount-${_campaign.id}" class="form-control mb-2"
                       placeholder="Enter amount to donate" />
             <div class="d-grid gap-2">
               <a class="btn btn-lg btn-outline-dark donateBtn fs-6 p-3" id=${_campaign.id
@@ -175,17 +175,18 @@ document
 document.querySelector("#comefundme").addEventListener("click", async (e) => {
     if (e.target.className.includes("donateBtn")) {
         const id = e.target.id
-        const amount = document.getElementById("donationAmount").value
-        console.log(typeof (amount));
+        const amount = document.getElementById(`donationAmount-${id}`).value
         notification(`⌛ Donating to "${campaigns[id].title}"...`)
         try {
+            console.log(amount, typeof (amount))
             const result = await contract.methods
                 .donate(id)
-                .send({ from: kit.defaultAccount, value: kit.web3.utils.toWei(amount) });
+                .send({ from: kit.defaultAccount, value: kit.web3.utils.toWei(amount.toString()) });
             notification(`🎉 You successfully donated ${amount} CELO to "${campaigns[id].title}".`)
             getCampaigns()
             getBalance()
         } catch (error) {
+            console.log(error)
             notification(`⚠️ ${error}.`)
         }
     } else if (e.target.className.includes("withdrawBtn")) {
